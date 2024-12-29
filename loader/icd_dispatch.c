@@ -153,6 +153,9 @@ static inline cl_int clGetPlatformIDs_body(
     cl_platform_id* platforms,
     cl_uint* num_platforms)
 {
+    if(!p_clIcdGetPlatformIDs) return CL_PLATFORM_NOT_FOUND_KHR;
+    return p_clIcdGetPlatformIDs(num_entries, platforms, num_platforms);
+
     KHRicdVendor* vendor = NULL;
     cl_uint i;
 

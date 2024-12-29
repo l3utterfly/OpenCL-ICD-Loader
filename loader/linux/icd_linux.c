@@ -245,7 +245,8 @@ void *khrIcdOsLibraryLoad(const char *libraryName)
     void* ret = dlopen (libraryName, RTLD_NOW);
     if (NULL == ret)
     {
-        KHR_ICD_TRACE("Failed to load driver because %s.\n", dlerror());
+        char* e = dlerror();
+        KHR_ICD_TRACE("Failed to load driver because %s.\n", e);
     }
     return ret;
 }

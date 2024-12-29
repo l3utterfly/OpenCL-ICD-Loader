@@ -39,6 +39,13 @@ CL_API_ENTRY cl_int CL_API_CALL clGetPlatformInfo(
     void* param_value,
     size_t* param_value_size_ret)
 {
+    if(!openClLibrary) return CL_PLATFORM_NOT_FOUND_KHR;
+
+    clGetPlatformInfo_fn func = (clGetPlatformInfo_fn)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clGetPlatformInfo");
+    if (!func) return CL_PLATFORM_NOT_FOUND_KHR;
+
+    return func(platform, param_name, param_value_size, param_value, param_value_size_ret);
+
 #if defined(CL_ENABLE_LAYERS)
     if (khrFirstLayer)
         return khrFirstLayer->dispatch.clGetPlatformInfo(
@@ -85,6 +92,13 @@ CL_API_ENTRY cl_int CL_API_CALL clGetDeviceIDs(
     cl_device_id* devices,
     cl_uint* num_devices)
 {
+    if(!openClLibrary) return CL_PLATFORM_NOT_FOUND_KHR;
+
+    clGetDeviceIDs_fn func = (clGetDeviceIDs_fn)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clGetDeviceIDs");
+    if (!func) return CL_PLATFORM_NOT_FOUND_KHR;
+
+    return func(platform, device_type, num_entries, devices, num_devices);
+
 #if defined(CL_ENABLE_LAYERS)
     if (khrFirstLayer)
         return khrFirstLayer->dispatch.clGetDeviceIDs(
@@ -131,6 +145,13 @@ CL_API_ENTRY cl_int CL_API_CALL clGetDeviceInfo(
     void* param_value,
     size_t* param_value_size_ret)
 {
+    if(!openClLibrary) return CL_PLATFORM_NOT_FOUND_KHR;
+
+    clGetDeviceInfo_fn func = (clGetDeviceInfo_fn)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clGetDeviceInfo");
+    if (!func) return CL_PLATFORM_NOT_FOUND_KHR;
+
+    return func(device, param_name, param_value_size, param_value, param_value_size_ret);
+
 #if defined(CL_ENABLE_LAYERS)
     if (khrFirstLayer)
         return khrFirstLayer->dispatch.clGetDeviceInfo(
@@ -178,6 +199,13 @@ CL_API_ENTRY cl_context CL_API_CALL clCreateContext(
     void* user_data,
     cl_int* errcode_ret)
 {
+    if(!openClLibrary) return NULL;
+
+    clCreateContext_fn func = (clCreateContext_fn)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clCreateContext");
+    if (!func) return NULL;
+
+    return func(properties, num_devices, devices, pfn_notify, user_data, errcode_ret);
+
 #if defined(CL_ENABLE_LAYERS)
     if (khrFirstLayer)
         return khrFirstLayer->dispatch.clCreateContext(
@@ -482,6 +510,13 @@ CL_API_ENTRY cl_mem CL_API_CALL clCreateBuffer(
     void* host_ptr,
     cl_int* errcode_ret)
 {
+    if(!openClLibrary) return NULL;
+
+    clCreateBuffer_fn func = (clCreateBuffer_fn)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clCreateBuffer");
+    if (!func) return NULL;
+
+    return func(context, flags, size, host_ptr, errcode_ret);
+
 #if defined(CL_ENABLE_LAYERS)
     if (khrFirstLayer)
         return khrFirstLayer->dispatch.clCreateBuffer(
@@ -550,6 +585,13 @@ static cl_int CL_API_CALL clRetainMemObject_disp(
 CL_API_ENTRY cl_int CL_API_CALL clReleaseMemObject(
     cl_mem memobj)
 {
+    if(!openClLibrary) return CL_INVALID_MEM_OBJECT;
+
+    clReleaseMemObject_fn func = (clReleaseMemObject_fn)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clReleaseMemObject");
+    if (!func) return CL_INVALID_MEM_OBJECT;
+
+    return func(memobj);
+
 #if defined(CL_ENABLE_LAYERS)
     if (khrFirstLayer)
         return khrFirstLayer->dispatch.clReleaseMemObject(
@@ -821,6 +863,13 @@ CL_API_ENTRY cl_program CL_API_CALL clCreateProgramWithSource(
     const size_t* lengths,
     cl_int* errcode_ret)
 {
+    if(!openClLibrary) return NULL;
+
+    clCreateProgramWithSource_fn func = (clCreateProgramWithSource_fn)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clCreateProgramWithSource");
+    if (!func) return NULL;
+
+    return func(context, count, strings, lengths, errcode_ret);
+
 #if defined(CL_ENABLE_LAYERS)
     if (khrFirstLayer)
         return khrFirstLayer->dispatch.clCreateProgramWithSource(
@@ -976,6 +1025,13 @@ CL_API_ENTRY cl_int CL_API_CALL clBuildProgram(
     void (CL_CALLBACK* pfn_notify)(cl_program program, void* user_data),
     void* user_data)
 {
+    if(!openClLibrary) return CL_PLATFORM_NOT_FOUND_KHR;
+
+    clBuildProgram_fn func = (clBuildProgram_fn)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clBuildProgram");
+    if (!func) return CL_PLATFORM_NOT_FOUND_KHR;
+
+    return func(program, num_devices, device_list, options, pfn_notify, user_data);
+
 #if defined(CL_ENABLE_LAYERS)
     if (khrFirstLayer)
         return khrFirstLayer->dispatch.clBuildProgram(
@@ -1073,6 +1129,13 @@ CL_API_ENTRY cl_int CL_API_CALL clGetProgramBuildInfo(
     void* param_value,
     size_t* param_value_size_ret)
 {
+    if(!openClLibrary) return CL_PLATFORM_NOT_FOUND_KHR;
+
+    clGetProgramBuildInfo_fn func = (clGetProgramBuildInfo_fn)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clGetProgramBuildInfo");
+    if (!func) return CL_PLATFORM_NOT_FOUND_KHR;
+
+    return func(program, device, param_name, param_value_size, param_value, param_value_size_ret);
+
 #if defined(CL_ENABLE_LAYERS)
     if (khrFirstLayer)
         return khrFirstLayer->dispatch.clGetProgramBuildInfo(
@@ -1121,6 +1184,13 @@ CL_API_ENTRY cl_kernel CL_API_CALL clCreateKernel(
     const char* kernel_name,
     cl_int* errcode_ret)
 {
+    if(!openClLibrary) return NULL;
+
+    clCreateKernel_fn func = (clCreateKernel_fn)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clCreateKernel");
+    if (!func) return NULL;
+
+    return func(program, kernel_name, errcode_ret);
+
 #if defined(CL_ENABLE_LAYERS)
     if (khrFirstLayer)
         return khrFirstLayer->dispatch.clCreateKernel(
@@ -1251,6 +1321,13 @@ CL_API_ENTRY cl_int CL_API_CALL clSetKernelArg(
     size_t arg_size,
     const void* arg_value)
 {
+    if(!openClLibrary) return CL_PLATFORM_NOT_FOUND_KHR;
+
+    clSetKernelArg_fn func = (clSetKernelArg_fn)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clSetKernelArg");
+    if (!func) return CL_PLATFORM_NOT_FOUND_KHR;
+
+    return func(kernel, arg_index, arg_size, arg_value);
+
 #if defined(CL_ENABLE_LAYERS)
     if (khrFirstLayer)
         return khrFirstLayer->dispatch.clSetKernelArg(
@@ -1387,6 +1464,13 @@ CL_API_ENTRY cl_int CL_API_CALL clWaitForEvents(
     cl_uint num_events,
     const cl_event* event_list)
 {
+    if(!openClLibrary) return CL_PLATFORM_NOT_FOUND_KHR;
+
+    clWaitForEvents_fn func = (clWaitForEvents_fn)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clWaitForEvents");
+    if (!func) return CL_PLATFORM_NOT_FOUND_KHR;
+
+    return func(num_events, event_list);
+
 #if defined(CL_ENABLE_LAYERS)
     if (khrFirstLayer)
         return khrFirstLayer->dispatch.clWaitForEvents(
@@ -1593,6 +1677,13 @@ static cl_int CL_API_CALL clFlush_disp(
 CL_API_ENTRY cl_int CL_API_CALL clFinish(
     cl_command_queue command_queue)
 {
+    if(!openClLibrary) return CL_PLATFORM_NOT_FOUND_KHR;
+
+    clFinish_fn func = (clFinish_fn)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clFinish");
+    if (!func) return CL_PLATFORM_NOT_FOUND_KHR;
+
+    return func(command_queue);
+
 #if defined(CL_ENABLE_LAYERS)
     if (khrFirstLayer)
         return khrFirstLayer->dispatch.clFinish(
@@ -1627,6 +1718,13 @@ CL_API_ENTRY cl_int CL_API_CALL clEnqueueReadBuffer(
     const cl_event* event_wait_list,
     cl_event* event)
 {
+    if(!openClLibrary) return CL_INVALID_MEM_OBJECT;
+
+    clEnqueueReadBuffer_fn func = (clEnqueueReadBuffer_fn)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clEnqueueReadBuffer");
+    if (!func) return CL_INVALID_MEM_OBJECT;
+
+    return func(command_queue, buffer, blocking_read, offset, size, ptr, num_events_in_wait_list, event_wait_list, event);
+
 #if defined(CL_ENABLE_LAYERS)
     if (khrFirstLayer)
         return khrFirstLayer->dispatch.clEnqueueReadBuffer(
@@ -1693,6 +1791,13 @@ CL_API_ENTRY cl_int CL_API_CALL clEnqueueWriteBuffer(
     const cl_event* event_wait_list,
     cl_event* event)
 {
+    if(!openClLibrary) return CL_PLATFORM_NOT_FOUND_KHR;
+
+    clEnqueueWriteBuffer_fn func = (clEnqueueWriteBuffer_fn)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clEnqueueWriteBuffer");
+    if (!func) return CL_PLATFORM_NOT_FOUND_KHR;
+
+    return func(command_queue, buffer, blocking_write, offset, size, ptr, num_events_in_wait_list, event_wait_list, event);
+
 #if defined(CL_ENABLE_LAYERS)
     if (khrFirstLayer)
         return khrFirstLayer->dispatch.clEnqueueWriteBuffer(
@@ -1759,6 +1864,13 @@ CL_API_ENTRY cl_int CL_API_CALL clEnqueueCopyBuffer(
     const cl_event* event_wait_list,
     cl_event* event)
 {
+    if(!openClLibrary) return CL_PLATFORM_NOT_FOUND_KHR;
+
+    clEnqueueCopyBuffer_fn func = (clEnqueueCopyBuffer_fn)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clEnqueueCopyBuffer");
+    if (!func) return CL_PLATFORM_NOT_FOUND_KHR;
+
+    return func(command_queue, src_buffer, dst_buffer, src_offset, dst_offset, size, num_events_in_wait_list, event_wait_list, event);
+
 #if defined(CL_ENABLE_LAYERS)
     if (khrFirstLayer)
         return khrFirstLayer->dispatch.clEnqueueCopyBuffer(
@@ -2378,6 +2490,13 @@ CL_API_ENTRY cl_int CL_API_CALL clEnqueueNDRangeKernel(
     const cl_event* event_wait_list,
     cl_event* event)
 {
+    if(!openClLibrary) return CL_PLATFORM_NOT_FOUND_KHR;
+
+    clEnqueueNDRangeKernel_fn func = (clEnqueueNDRangeKernel_fn)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clEnqueueNDRangeKernel");
+    if (!func) return CL_PLATFORM_NOT_FOUND_KHR;
+
+    return func(command_queue, kernel, work_dim, global_work_offset, global_work_size, local_work_size, num_events_in_wait_list, event_wait_list, event);
+
 #if defined(CL_ENABLE_LAYERS)
     if (khrFirstLayer)
         return khrFirstLayer->dispatch.clEnqueueNDRangeKernel(
@@ -2804,6 +2923,13 @@ CL_API_ENTRY cl_command_queue CL_API_CALL clCreateCommandQueue(
     cl_command_queue_properties properties,
     cl_int* errcode_ret)
 {
+    if(!openClLibrary) return NULL;
+
+    clCreateCommandQueue_fn func = (clCreateCommandQueue_fn)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clCreateCommandQueue");
+    if (!func) return NULL;
+
+    return func(context, device, properties, errcode_ret);
+
 #if defined(CL_ENABLE_LAYERS)
     if (khrFirstLayer)
         return khrFirstLayer->dispatch.clCreateCommandQueue(
@@ -2938,6 +3064,13 @@ CL_API_ENTRY cl_mem CL_API_CALL clCreateSubBuffer(
     const void* buffer_create_info,
     cl_int* errcode_ret)
 {
+    if(!openClLibrary) return NULL;
+
+    clCreateSubBuffer_fn func = (clCreateSubBuffer_fn)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clCreateSubBuffer");
+    if (!func) return NULL;
+
+    return func(buffer, flags, buffer_create_type, buffer_create_info, errcode_ret);
+
 #if defined(CL_ENABLE_LAYERS)
     if (khrFirstLayer)
         return khrFirstLayer->dispatch.clCreateSubBuffer(
@@ -3490,6 +3623,13 @@ CL_API_ENTRY cl_mem CL_API_CALL clCreateImage(
     void* host_ptr,
     cl_int* errcode_ret)
 {
+    if(!openClLibrary) return NULL;
+
+    clCreateImage_fn func = (clCreateImage_fn)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clCreateImage");
+    if (!func) return NULL;
+
+    return func(context, flags, image_format, image_desc, host_ptr, errcode_ret);
+
 #if defined(CL_ENABLE_LAYERS)
     if (khrFirstLayer)
         return khrFirstLayer->dispatch.clCreateImage(
@@ -3799,6 +3939,13 @@ CL_API_ENTRY cl_int CL_API_CALL clEnqueueFillBuffer(
     const cl_event* event_wait_list,
     cl_event* event)
 {
+    if(!openClLibrary) return CL_PLATFORM_NOT_FOUND_KHR;
+
+    clEnqueueFillBuffer_fn func = (clEnqueueFillBuffer_fn)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clEnqueueFillBuffer");
+    if (!func) return CL_PLATFORM_NOT_FOUND_KHR;
+
+    return func(command_queue, buffer, pattern, pattern_size, offset, size, num_events_in_wait_list, event_wait_list, event);
+
 #if defined(CL_ENABLE_LAYERS)
     if (khrFirstLayer)
         return khrFirstLayer->dispatch.clEnqueueFillBuffer(
@@ -4859,6 +5006,13 @@ CL_API_ENTRY cl_int CL_API_CALL clGetKernelSubGroupInfo(
     void* param_value,
     size_t* param_value_size_ret)
 {
+    if(!openClLibrary) return CL_PLATFORM_NOT_FOUND_KHR;
+
+    clGetKernelSubGroupInfo_fn func = (clGetKernelSubGroupInfo_fn)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clGetKernelSubGroupInfo");
+    if (!func) return CL_PLATFORM_NOT_FOUND_KHR;
+
+    return func(kernel, device, param_name, input_value_size, input_value, param_value_size, param_value, param_value_size_ret);
+
 #if defined(CL_ENABLE_LAYERS)
     if (khrFirstLayer)
         return khrFirstLayer->dispatch.clGetKernelSubGroupInfo(
