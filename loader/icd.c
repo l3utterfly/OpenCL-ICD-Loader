@@ -94,6 +94,20 @@ void khrIcdVendorAdd(const char *libraryName)
         }
     }
 
+    KHR_ICD_TRACE("Attempting to load function clGetPlatformIDs directly...\n");
+
+    // direct loading
+    p_clIcdGetPlatformIDs = (pfn_clIcdGetPlatformIDs)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clGetPlatformIDs");
+    if (!p_clIcdGetPlatformIDs)
+    {
+        KHR_ICD_TRACE("failed to get function address clIcdGetPlatformIDsKHR\n");
+        goto Done;
+    }
+
+    KHR_ICD_TRACE("Successfully loaded vendor %s...\n", libraryName);
+
+    return;     // skip loading platforms for now (and also skips unloading the library)
+
     // get the library's clGetExtensionFunctionAddress pointer
     p_clGetExtensionFunctionAddress = (pfn_clGetExtensionFunctionAddress)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clGetExtensionFunctionAddress");
     if (!p_clGetExtensionFunctionAddress)
@@ -115,8 +129,6 @@ void khrIcdVendorAdd(const char *libraryName)
             goto Done;
         }
     }
-
-    return;     // skip loading platforms for now (and also skips unloading the library)
 
     // query the number of platforms available and allocate space to store them
     result = p_clIcdGetPlatformIDs(0, NULL, &platformCount);

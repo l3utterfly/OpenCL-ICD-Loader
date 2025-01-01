@@ -220,6 +220,8 @@ void khrIcdOsVendorsEnumerate(void)
     khrIcdOsDirEnumerate(ICD_VENDOR_PATH, "OCL_ICD_VENDORS", ".icd", khrIcdVendorAdd, 0);
 
 #if defined(CL_ENABLE_LAYERS)
+    KHR_ICD_TRACE("Loading OpenCL Layers...\n");
+
     // system layers should be closer to the driver
     khrIcdOsDirEnumerate(LAYER_PATH, "OPENCL_LAYER_PATH", ".lay", khrIcdLayerAdd, 1);
 

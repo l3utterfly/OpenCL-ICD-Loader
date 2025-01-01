@@ -177,7 +177,21 @@ void khrIcdContextPropertiesGetPlatform(
     const cl_context_properties *properties, 
     cl_platform_id *outPlatform);
 
-// internal tracing macros
+#ifdef __ANDROID__
+#include <android/log.h>
+#define KHR_ICD_TRACE(...) \
+do \
+{ \
+    if (khrEnableTrace) \
+    { \
+        char buffer[1024]; \
+        snprintf(buffer, sizeof(buffer), "KHR ICD trace at %s:%d: ", __FILE__, __LINE__); \
+        char msg[1024]; \
+        snprintf(msg, sizeof(msg), __VA_ARGS__); \
+        __android_log_print(ANDROID_LOG_DEBUG, "KHR_ICD", "%s%s", buffer, msg); \
+    } \
+} while (0)
+#else
 #define KHR_ICD_TRACE(...) \
 do \
 { \
@@ -187,6 +201,7 @@ do \
         fprintf(stderr, __VA_ARGS__); \
     } \
 } while (0)
+#endif
 
 #ifdef _WIN32
 #define KHR_ICD_WIDE_TRACE(...) \

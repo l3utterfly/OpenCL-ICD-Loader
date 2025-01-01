@@ -153,6 +153,8 @@ static inline cl_int clGetPlatformIDs_body(
     cl_platform_id* platforms,
     cl_uint* num_platforms)
 {
+    KHR_ICD_TRACE("Calling function p_clIcdGetPlatformIDs...\n");
+
     if(!p_clIcdGetPlatformIDs) return CL_PLATFORM_NOT_FOUND_KHR;
     return p_clIcdGetPlatformIDs(num_entries, platforms, num_platforms);
 

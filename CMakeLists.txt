@@ -132,7 +132,10 @@ if (WIN32)
         set_target_properties(OpenCL PROPERTIES LINK_FLAGS "-Wl,-disable-stdcall-fixup")
     endif()
 else()
-    target_link_libraries (OpenCL PRIVATE ${CMAKE_THREAD_LIBS_INIT})
+    # Search for the 'log' library for Android
+    find_library(log-lib log)
+
+    target_link_libraries (OpenCL PRIVATE ${CMAKE_THREAD_LIBS_INIT} ${log-lib})
     if (NOT APPLE)
         set_target_properties (OpenCL PROPERTIES LINK_FLAGS "-Wl,--version-script -Wl,${CMAKE_CURRENT_SOURCE_DIR}/loader/linux/icd_exports.map")
         if (OPENCL_ICD_LOADER_PIC)
@@ -176,7 +179,6 @@ target_include_directories (OpenCL
 target_link_libraries (OpenCL PUBLIC ${CMAKE_DL_LIBS})
 
 if (ENABLE_OPENCL_LAYERINFO)
-
   set (OPENCL_LAYER_INFO_SOURCES
       loader/cllayerinfo.c
       ${OPENCL_ICD_LOADER_SOURCES}
