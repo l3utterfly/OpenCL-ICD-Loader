@@ -203,7 +203,10 @@ if (ENABLE_OPENCL_LAYERINFO)
   if (WIN32)
     target_link_libraries (cllayerinfo PRIVATE cfgmgr32.lib runtimeobject.lib)
   else ()
-    target_link_libraries (cllayerinfo PRIVATE ${CMAKE_THREAD_LIBS_INIT})
+    # Search for the 'log' library for Android
+    find_library(log-lib log)
+
+    target_link_libraries (cllayerinfo PRIVATE ${CMAKE_THREAD_LIBS_INIT} ${log-lib})
   endif ()
 
   target_link_libraries (cllayerinfo PUBLIC ${CMAKE_DL_LIBS})
