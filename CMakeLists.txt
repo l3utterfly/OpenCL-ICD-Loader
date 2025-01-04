@@ -179,6 +179,7 @@ target_include_directories (OpenCL
 target_link_libraries (OpenCL PUBLIC ${CMAKE_DL_LIBS})
 
 if (ENABLE_OPENCL_LAYERINFO)
+
   set (OPENCL_LAYER_INFO_SOURCES
       loader/cllayerinfo.c
       ${OPENCL_ICD_LOADER_SOURCES}
@@ -224,7 +225,6 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR OPENCL_ICD_LOADER_BUILD_TESTING)
     include(CTest)
 endif()
 if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR OPENCL_ICD_LOADER_BUILD_TESTING) AND BUILD_TESTING)
-    message(STATUS "Building OpenCL ICD Loader tests")
     add_subdirectory (test)
 endif()
 

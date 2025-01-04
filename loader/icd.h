@@ -97,7 +97,6 @@ struct KHRicdVendorRec
 // the global state
 extern KHRicdVendor * khrIcdVendors;
 extern void * openClLibrary;
-extern pfn_clIcdGetPlatformIDs p_clIcdGetPlatformIDs;
 
 extern int khrEnableTrace;
 

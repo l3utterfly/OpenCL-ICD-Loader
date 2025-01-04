@@ -29,9 +29,8 @@
 KHRicdVendor *khrIcdVendors = NULL;
 int khrEnableTrace = 0;
 
-// load symbols manually here
+// direct handle to library for pass-through ICD
 void* openClLibrary = NULL;
-pfn_clIcdGetPlatformIDs p_clIcdGetPlatformIDs = NULL;
 
 #if defined(CL_ENABLE_LAYERS)
 struct KHRLayer *khrFirstLayer = NULL;
@@ -59,11 +58,16 @@ void khrIcdInitialize(void)
 
 void khrIcdVendorAdd(const char *libraryName)
 {
-    // skip if we have already loaded our library
+    // skip if we have already loaded our pass-through library handle
     if(openClLibrary != NULL) return;
 
+    // in our implementation, we only load one vendor, so if our khrIcdVendors is not NULL, we have already loaded a vendor
+    if(khrIcdVendors != NULL) return;
+
+    void *library = NULL;
     cl_int result = CL_SUCCESS;
     pfn_clGetExtensionFunctionAddress p_clGetExtensionFunctionAddress = NULL;
+    pfn_clIcdGetPlatformIDs p_clIcdGetPlatformIDs = NULL;
     cl_uint i = 0;
     cl_uint platformCount = 0;
     cl_platform_id *platforms = NULL;
@@ -77,8 +81,8 @@ void khrIcdVendorAdd(const char *libraryName)
     KHR_ICD_TRACE("attempting to add vendor %s...\n", libraryName);
 
     // load its library and query its function pointers
-    openClLibrary = khrIcdOsLibraryLoad(libraryName);
-    if (!openClLibrary)
+    library = khrIcdOsLibraryLoad(libraryName);
+    if (!library)
     {
         KHR_ICD_TRACE("failed to load library %s\n", libraryName);
         goto Done;
@@ -87,29 +91,15 @@ void khrIcdVendorAdd(const char *libraryName)
     // ensure that we haven't already loaded this vendor
     for (vendorIterator = khrIcdVendors; vendorIterator; vendorIterator = vendorIterator->next)
     {
-        if (vendorIterator->library == openClLibrary)
+        if (vendorIterator->library == library)
         {
             KHR_ICD_TRACE("already loaded vendor %s, nothing to do here\n", libraryName);
             goto Done;
         }
     }
 
-    KHR_ICD_TRACE("Attempting to load function clGetPlatformIDs directly...\n");
-
-    // direct loading
-    p_clIcdGetPlatformIDs = (pfn_clIcdGetPlatformIDs)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clGetPlatformIDs");
-    if (!p_clIcdGetPlatformIDs)
-    {
-        KHR_ICD_TRACE("failed to get function address clIcdGetPlatformIDsKHR\n");
-        goto Done;
-    }
-
-    KHR_ICD_TRACE("Successfully loaded vendor %s...\n", libraryName);
-
-    return;     // skip loading platforms for now (and also skips unloading the library)
-
     // get the library's clGetExtensionFunctionAddress pointer
-    p_clGetExtensionFunctionAddress = (pfn_clGetExtensionFunctionAddress)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clGetExtensionFunctionAddress");
+    p_clGetExtensionFunctionAddress = (pfn_clGetExtensionFunctionAddress)(size_t)khrIcdOsLibraryGetFunctionAddress(library, "clGetExtensionFunctionAddress");
     if (!p_clGetExtensionFunctionAddress)
     {
         KHR_ICD_TRACE("failed to get function address clGetExtensionFunctionAddress\n");
@@ -120,14 +110,22 @@ void khrIcdVendorAdd(const char *libraryName)
     p_clIcdGetPlatformIDs = (pfn_clIcdGetPlatformIDs)(size_t)p_clGetExtensionFunctionAddress("clIcdGetPlatformIDsKHR");
     if (!p_clIcdGetPlatformIDs)
     {
-        KHR_ICD_TRACE("failed to get through extension function, trying direct load\n");
-        // Fallback to direct loading
-        p_clIcdGetPlatformIDs = (pfn_clIcdGetPlatformIDs)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clGetPlatformIDs");
+        KHR_ICD_TRACE("failed to get extension function address clIcdGetPlatformIDsKHR, we try to load clGetPlatformIDs directly\n");
+
+        // direct loading
+        p_clIcdGetPlatformIDs = (pfn_clIcdGetPlatformIDs)(size_t)khrIcdOsLibraryGetFunctionAddress(library, "clGetPlatformIDs");
         if (!p_clIcdGetPlatformIDs)
         {
-            KHR_ICD_TRACE("failed to get function address clIcdGetPlatformIDsKHR\n");
+            KHR_ICD_TRACE("failed to get function address clGetPlatformIDs\n");
             goto Done;
         }
+
+        KHR_ICD_TRACE("Successfully loaded vendor %s...\n", libraryName);
+
+        // set the global openClLibrary handle to the library we just loaded
+        openClLibrary = library;
+
+        return;     // skip loading platforms for now (and also skips unloading the library)
     }
 
     // query the number of platforms available and allocate space to store them
@@ -226,9 +224,9 @@ void khrIcdVendorAdd(const char *libraryName)
 
 Done:
 
-    if (openClLibrary)
+    if (library)
     {
-        khrIcdOsLibraryUnload(openClLibrary);
+        khrIcdOsLibraryUnload(library);
     }
     if (platforms)
     {

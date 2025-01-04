@@ -155,8 +155,12 @@ static inline cl_int clGetPlatformIDs_body(
 {
     KHR_ICD_TRACE("Calling function p_clIcdGetPlatformIDs...\n");
 
-    if(!p_clIcdGetPlatformIDs) return CL_PLATFORM_NOT_FOUND_KHR;
-    return p_clIcdGetPlatformIDs(num_entries, platforms, num_platforms);
+    if(openClLibrary) {
+        clGetPlatformIDs_fn func = (clGetPlatformIDs_fn)(size_t)khrIcdOsLibraryGetFunctionAddress(openClLibrary, "clGetPlatformIDs");
+        if (!func) return CL_PLATFORM_NOT_FOUND_KHR;
+
+        return func(num_entries, platforms, num_platforms);
+    }
 
     KHRicdVendor* vendor = NULL;
     cl_uint i;
